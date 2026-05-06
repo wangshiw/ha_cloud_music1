@@ -268,9 +268,9 @@ async def async_browse_media(media_player, media_content_type, media_content_id)
                 res = await cloud_music.netease_cloud_music('/login/qr/key')
                 if res['code'] == 200:
                     codekey = res['data']['unikey']
-                    res = await cloud_music.netease_cloud_music(f'/login/qr/create?key={codekey}')
+                    res = await cloud_music.netease_cloud_music(f'/login/qr/create?key={codekey}&qrimg=true')
                     qr['key'] = codekey
-                    qr['url'] = res['data']['qrurl']
+                    qr['url'] = res['data']['qrimg'] if res['data']['qrimg'] != '' else f'https://cdn.dotmaui.com/qrc/?t={res["data"]["qrurl"]}'
                     qr['time'] = now
 
             return BrowseMedia(
@@ -288,7 +288,7 @@ async def async_browse_media(media_player, media_content_type, media_content_id)
                         media_content_id=CloudMusicRouter.my_login + '?action=login&id=' + qr['key'],
                         can_play=False,
                         can_expand=True,
-                        thumbnail=f'https://cdn.dotmaui.com/qrc/?t={qr["url"]}'
+                        thumbnail=qr['url']
                     )
                 ],
             )
